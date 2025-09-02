@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Mietshäuser Syndikat - Kontoauszugversand mit DKV2-Daten</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    .step-container { margin-bottom: 2rem; padding: 1.5rem; border-radius: 1rem; background: #f9f9f9; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    textarea { width: 100%; min-height: 180px; }
+    body {background: url("{{ url_for('static', filename='Hintergrund.png') }}");}
+  </style>
+</head>
+<body class="container py-4">
+
+  
+
+  <!-- STEP 1: CSV Upload -->
+  {% if step == 1 %}
+  <div class="step-container">
+    <h1 class="mb-4">Mietshäuser Syndikat - Kontoauszugversand mit DKV2-Daten</h1>
+    <h3>1. DKV2-Daten (als .csv) hochladen</h3>
+    <p> Der erste Schritt des Vorgangs beinhaltet den Upload der Daten, die Ihr von DKV2 als .csv-Datei exportiert habt.
+    Das funktioniert in DKV2 via "Verträge" --> "Listen drucken" --> "Aktive Verträge mit Kontaktdaten" (siehe nachfolgendem Screenshot).</p> 
+    <div style="text-align:center">
+        <img src="{{ url_for('static', filename='Screenshot-DKV2.png') }}" alt="Screenshot DKV2" height="400vh" width="600vw">
+    </div>
+    <p>Als Standardwert gibt DKV2 einzelne Spalten durch den Spaltentrenner Semikolon ";" zu erkennen. 
+    Meine Funktionen bauen auf dieser Formatierung auf. Wenn Ihr sichergehen möchtet, dass alles passt, könnt 
+    Ihr nochmal die Datei in einem Text-Editor öffnen und schauen, ob zwischen einzelnen Spalten ";" diese Zeichen stehen. </br>
+    Ihr müsst zusätzlich noch das Jahr eingeben, für welches Ihr die Kontoauszüge verschicken möchtet.</p>
+    </br>
+    </br>
+    <form method="POST" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="csv_file" class="form-label">CSV-Datei in der sich die DKV2-Daten befinden.</label>
+        <input type="file" class="form-control" name="csv_file" placeholder="Aktive Verträge.csv" required>
+      </div>
+      <div class="mb-3">
+        <label for="year" class="form-label">Jahr (yyyy)</label>
+        <input type="number" class="form-control" name="year" placeholder="yyyy" required>
+      </div>
+      <button type="submit" name="next" class="btn btn-primary">Weiter</button>
+    </form>
+  </div>
+  {% endif %}
+  <!-- STEP 2: Projektangaben -->
+  {% if step == 2 and table %}
+  <div class="step-container">
+    <h1 class="mb-4">Mietshäuser Syndikat - Kontoauszugversand mit DKV2-Daten</h1>
+    <h3>2. Projektangaben</h3>
+    <p> Im zweiten Schritt gebt Ihr Informationen zu Eurem Projekt an. Diese Infos werden dann automatisch in den 
+    Kontoauszug eingesetzt. Am besten, Ihr gebt den Projektartikel mit einem Großbuchstaben beginnend ein, da dieser 
+    für die Abschiedsformel verwendet wird. Die Kontoauszüge werden in einem neuen Ordner gespeichert.</p> 
+   <p> Dieser Ordner trägt den Namen "Kontoauszüge" und ist dort abgelegt, wo sich die CSV-Datei befindet.</p>
+   <p> Unter dem nachfolgenden Formular findet Ihr eine Tabelle mit den Daten, welche Ihr hochgeladen habt. Bitte kontrolliert diese nochmal!</p></br>
+    <form method="POST">
+      <div class="mb-3">
+        <label for="projektartikel" class="form-label">Projektartikel</label>
+        <input type="text" name="projektartikel" class="form-control" placeholder="Die/ Eure..." required>
+      </div>
+      <div class="mb-3">
+        <label for="projektname" class="form-label">Projektname</label>
+        <input type="text" class="form-control" name="projektname" placeholder="Freiau99 ;-)" required>
+      </div>
+      <button type="submit" name="next" class="btn btn-primary">Kontoauszüge erstellen</button>
+    </form>
+    </br>
+    <form method="POST"><button name="back" class="btn btn-primary">Zurück</button></form>
+    </br>
+    <!-- Buttons für Anzeige und Maximierung -->
+    <button id="toggle-table" class="btn btn-secondary">Anzeigen/Verbergen</button>
+    <button id="maximize-table" class="btn btn-secondary">Maximieren</button>
+    <div id="table-container" style="display:none; max-width:90vw; max-height:90vh; overflow:auto; margin-top:10px;">
+        {{ table | safe }}
+    </div>
+    <script>
+        const toggleBtn = document.getElementById("toggle-table");
+        const tableContainer = document.getElementById("table-container");
+        toggleBtn.onclick = () => {
+            tableContainer.style.display = tableContainer.style.display === "none" ? "block" : "none";
+        };
+    
+        const maximizeBtn = document.getElementById("maximize-table");
+        maximizeBtn.onclick = () => {
+            if(tableContainer.style.position !== "fixed") {
+                tableContainer.style.position = "fixed";
+                tableContainer.style.top = "5vh";
+                tableContainer.style.left = "5vw";
+                tableContainer.style.width = "90vw";
+                tableContainer.style.height = "90vh";
+                tableContainer.style.backgroundColor = "white";
+                tableContainer.style.zIndex = "9999";
+                tableContainer.style.overflow = "auto";
+            } else {
+                tableContainer.style.position = "";
+                tableContainer.style.width = "";
+                tableContainer.style.height = "";
+                tableContainer.style.top = "";
+                tableContainer.style.left = "";
+                tableContainer.style.backgroundColor = "";
+                tableContainer.style.zIndex = "";
+            }
+        };
+    </script>
+    {% endif %}
+
+  <!-- STEP 3: Mailversand -->
+  {% if step == 3 %}
+  <div class="step-container">
+    <h1 class="mb-4">Mietshäuser Syndikat - Kontoauszugversand mit DKV2-Daten</h1>
+    <h3>3. Mailversand</h3>
+    <p> Im letzten Schritt gebt Ihr noch Infos für die jeweiligen Mails an Eure Direktkreditgebenden an. </p>
+    <p> <span style="color:red;"><strong>Bitte achtet beim Feld "Mailtext" unbedingt darauf, dass Ihr die spezifisch einzusetzenden
+    Werte v.a. {name} - also den Namen der DK-gebenden Person - auch in geschweiften Klammern schreibt! </strong></span> Ihr könnt auch 
+    {projektartikel}, {projektname} und {yr} eintragen und 
+    so Euer Projektartikel, -Name und das Jahr automatisch vervollständigen lassen, aber das könnt Ihr auch schreiben.</p>
+    Solltet Ihr ganz unsicher sein, nutzt entweder meinen Text oder gestaltet den Text unpersönlich. </br></br>
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label"> <a rel="noopener noreferrer" 
+        href="https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol" 
+        target="_blank">SMTP-Server</a> eures Mailaccounts </br> (z.B., mail.riseup.net für riseup, posteo.de für posteo usw.:) </label>
+        <input type="text" class="form-control" name="smtp_server" placeholder="z.B. mail.posteo.de" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Eigene Mailadresse</label>
+        <input type="email" class="form-control" name="email_adresse" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Passwort</label>
+        <input type="password" class="form-control" name="passwort" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Betreff</label>
+        <input type="text" class="form-control" name="betreff" value="Kontoauszug {{ session['year'] }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Mailtext</label>
+        <textarea name="mailtext" required>
+Hallo {name},
+
+es ist wieder an der Zeit, dass {projektartikel} {projektname} Zinsen verschenkt :-)
+
+Vielen Dank für Deine Unterstützung und Deine Treue!  
+Im angehängten Kontoauszug des Jahres {yr} findest Du die Infos zu Deinem Direktkredit.
+
+Wir wünschen eine besinnliche Zeit und einen guten Rutsch.
+
+Liebe Grüße  
+{projektartikel} {projektname}
+        </textarea>
+      </div>
+      <button type="submit" name="next" class="btn btn-success" name="send_mails" value="1">Mails versenden</button>
+    </form>
+    </br>
+    <form method="POST"><button name="back" class="btn btn-primary">Zurück</button></form>
+  </div>
+    {% endif %}
+  
+    <!-- Schritt 4 -->
+  {% if step == 4 %}
+  <div class="step-container">
+    <h1 class="mb-4">Mietshäuser Syndikat - Kontoauszugversand mit DKV2-Daten</h1>
+    <h3>4. Ergebnisübersicht</h3>
+    <table border="1">
+        <tr><th>Name</th><th>Versandstatus</th></tr>
+        {% for name, status in versand_status.items() %}
+        <tr>
+            <td>{{ name }}</td>
+            <td>{{ status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="{{ url_for('download_status') }}">Download Versandstatus (CSV)</a>
+    </br>
+    <form method="POST"><button name="back" class="btn btn-primary">Zurück</button></form>
+  </div>
+    {% endif %}
+
+<script>
+function toggleTable() {
+  const container = document.getElementById("table-container");
+  container.style.display = (container.style.display === "none") ? "block" : "none";
+}
+
+function maximizeTable() {
+  const container = document.getElementById("table-container");
+  if (!container.classList.contains("fullscreen")) {
+    container.classList.add("fullscreen");
+    container.style.position = "fixed";
+    container.style.top = "5%";
+    container.style.left = "5%";
+    container.style.width = "90vw";
+    container.style.height = "90vh";
+    container.style.background = "white";
+    container.style.zIndex = "1050";
+    container.style.padding = "1rem";
+    container.style.overflow = "auto";
+  } else {
+    container.classList.remove("fullscreen");
+    container.style = "display:block; margin-top:1rem; overflow:auto; max-height:400px;";
+  }
+}
+</script>
+</body>
+</html>

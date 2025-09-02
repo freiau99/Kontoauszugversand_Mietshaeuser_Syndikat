@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>DK-Tabelle Überprüfung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        .btn {
+            margin-top: 2rem;
+            padding: 10px 20px;
+            background: #0077cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background: #005fa3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Überprüfung der DK-Tabelle</h1>
+    <p>Bitte prüft die untenstehende Tabelle sorgfältig. Wenn alles stimmt, könnt ihr mit den weiteren Funktionen fortfahren.</p>
+
+    <!-- Tabelle hier einfügen -->
+    {{ table | safe }}
+</body>
+</html>
