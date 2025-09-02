@@ -147,15 +147,23 @@ def kontoauszüge_versenden(direktis, year, projektname, projektartikel,
             message['From'] = email_adresse
             message['To'] = values[2]
             message.attach(MIMEText(body))
+            
+            message_sent = MIMEMultipart()
+            message_sent['Subject'] = "Gesendet: " + betreff
+            message_sent['From'] = email_adresse
+            message_sent['To'] = email_adresse
+            message_sent.attach(MIMEText(body))
 
             filename = f"{directory}/{prefix}{geber.replace(' ','_')}.pdf"
             with open(filename, 'rb') as file:
                 message.attach(MIMEApplication(file.read(), Name=os.path.basename(filename)))
+                message_sent.attach(MIMEApplication(file.read(), Name=os.path.basename(filename)))
 
             smtp_objekt = smtplib.SMTP(smtp_server, 587)
             smtp_objekt.starttls()
             smtp_objekt.login(email_adresse, passwort)
             smtp_objekt.sendmail(email_adresse, values[2], message.as_string())
+            smtp_objekt.sendmail(email_adresse, email_adresse, message_sent.as_string())
             smtp_objekt.quit()
 
             versand_status[geber] = "Kontoauszug versendet"
