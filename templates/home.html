@@ -70,50 +70,24 @@
   <div class="step-container">
     <h1 class="mb-4">Mietshäuser Syndikat - Kontoauszugversand mit DKV2-Daten</h1>
     <h3>2. Projektangaben</h3>
-    <p> Im zweiten Schritt gebt Ihr Informationen zu Eurem Projekt an. Diese Infos werden dann automatisch in den 
+    <p> Im zweiten Schritt kontrolliert Ihr die Formatierung der Daten der DKV2-Tabelle und gebt anschließend 
+    Informationen zu Eurem Projekt an. Diese Infos werden dann automatisch in den 
     Kontoauszug eingesetzt. Am besten, Ihr gebt den Projektartikel mit einem Großbuchstaben beginnend ein, da dieser 
     für die Abschiedsformel verwendet wird. Die Kontoauszüge werden in einem neuen Ordner gespeichert.</p> 
    <p> Dieser Ordner trägt den Namen "Kontoauszüge" und ist dort abgelegt, wo sich die CSV-Datei befindet.</p>
-   <p> Unter dem nachfolgenden Formular findet Ihr eine Tabelle mit den Daten, welche Ihr hochgeladen habt. Bitte kontrolliert diese nochmal!</p></br>
-    <form method="POST">
-      <div class="mb-3">
-        <label for="projektartikel" class="form-label">Projektartikel</label>
-        <input type="text" name="projektartikel" class="form-control" placeholder="Die/ Eure..." required>
-      </div>
-      <div class="mb-3">
-        <label for="projektname" class="form-label">Projektname</label>
-        <input type="text" class="form-control" name="projektname" placeholder="Freiau99 ;-)" required>
-      </div>
-      <button type="submit" name="next" class="btn btn-primary">Kontoauszüge erstellen</button>
-    </form>
-    </br>
-    <form method="POST"><button name="back" class="btn btn-primary">Zurück</button></form>
-    </br>
-    <div class="donation-container">
-    <h3>Nutzung der Web-App</h3>
-    <p>Liebe Nutzende,  </p>
-    <p>Die App wurde im August bis September 2025 entwickelt. Heißt, möglicherweise ist sie recht neu, wenn Ihr sie
-    nutzt. Bei mir funktioniert sie, allerdings könnt Ihr gerne auch einfach erstmal testen - unter Angabe, dass die 
-    Kontoauszüge ungültig sind und die gültigen zum Jahresende kommen - und mir Rückmeldung geben (Mailadresse unten).</p>    
-    <p>Außerdem gebe ich Euch die Web-App zum Kontoauszugversand basierend auf Euren DKV2-Daten sehr gerne weiter 
-    und grundsätzlich finde ich es sehr wichtig, Euch das auch kostenlos zur Verfügung zu stellen.  </p>
-    <p> Vielleicht funktioniert die App für Euch allerdings so gut, dass Ihr gerne etwas zurückgeben möchtet oder Euch
-    vorstellen könnt, mal im Projekt zu besprechen, wie.  
-    Um einige Möglichkeiten zu nennen: 
-    <ul>
-        <li>Die <a href="freiau99.github.io/freiau99" target="_blank">Freiau99</a> (Freiburg)
-        freut sich über Eure Kontaktaufnahme bezüglich Direktkrediten, da wir diese, wie gefühlt alle gerade brauchen können
-        :-D </li>
-        <li>Da meine persönlichen Finanzen generell auch häufig eher mau aussehen, freue ich mich auch über eine Spende - 
-        Ihr könnt mir gerne eine Mail schreiben an mariushuber123@gmail.com.</li>
-    </ul>  </p>
-    Soviel dazu - viel Spaß, vielen Dank und viele Grüße, Mare (Freiau99 - Freiburg).
-    </div>
-    </br>
-    <!-- Buttons für Anzeige und Maximierung -->
-    <button id="toggle-table" class="btn btn-secondary">Anzeigen/Verbergen</button>
-    <button id="maximize-table" class="btn btn-secondary">Maximieren</button>
+   <p> Nachfolgend findet Ihr eine Tabelle mit den Daten, welche Ihr hochgeladen habt. Bitte kontrolliert diese nochmal!</p></br>
+    <h4>Kontrolle der Daten</h4>
+    Für einen funktionstüchtigen Versand der Daten ist es essentiell, dass die Daten in den richtigen Spalten und 
+    im richtigen Format abgebildet werden. Daher checkt bitte nochmal, ob die Anzeige der Tabelle, die erscheint, 
+    wenn Ihr den Button "Anzeigen/ Verbergen" drückt, Sinn macht. Es sollte ungefähr so aussehen: (PS: Ja, die teilen
+    sich alle eine Mailadresse :-))
+     <div style="text-align:center">
+         <img src="{{ url_for('static', filename='Mustertabelle.png') }}" alt="Mustertabelle" height="auto" width="800vw">
+     </div>
+    <button id="toggle-table" class="btn btn-secondary">Anzeigen/ Verbergen</button>
     <div id="table-container" style="display:none; max-width:90vw; max-height:90vh; overflow:auto; margin-top:10px;">
+        <button id="maximize-table" class="btn btn-secondary">Maximieren</button>
+        <button id="minimize-table" class="btn btn-secondary">Minimieren</button>
         {{ table | safe }}
     </div>
     <script>
@@ -144,7 +118,69 @@
                 tableContainer.style.zIndex = "";
             }
         };
+        const minimizeBtn = document.getElementById("minimize-table");
+        minimizeBtn.onclick = () => {
+            if(tableContainer.style.position == "fixed") {
+                tableContainer.style.position = "";
+                tableContainer.style.width = "";
+                tableContainer.style.height = "";
+                tableContainer.style.top = "";
+                tableContainer.style.left = "";
+                tableContainer.style.backgroundColor = "";
+                tableContainer.style.zIndex = "";
+            } else {
+                tableContainer.style.position = "fixed";
+                tableContainer.style.top = "5vh";
+                tableContainer.style.left = "5vw";
+                tableContainer.style.width = "90vw";
+                tableContainer.style.height = "90vh";
+                tableContainer.style.backgroundColor = "white";
+                tableContainer.style.zIndex = "9999";
+                tableContainer.style.overflow = "auto";
+            }
+        };
     </script>
+    </br>
+    </br>
+    <h4>Eingabeformular Projektname und -Artikel</h4>
+    Wenn die Tabelle ähnlich dem Screenshot angezeigt wird, könnt Ihr noch Name und Artikel Eures Projekts eingeben. 
+    </br>
+    <form method="POST">
+      <div class="mb-3">
+        <label for="projektartikel" class="form-label">Projektartikel</label>
+        <input type="text" name="projektartikel" class="form-control" placeholder="Die/ Eure..." required>
+      </div>
+      <div class="mb-3">
+        <label for="projektname" class="form-label">Projektname</label>
+        <input type="text" class="form-control" name="projektname" placeholder="Freiau99 ;-)" required>
+      </div> </br>
+      <button type="submit" name="next" class="btn btn-primary">Kontoauszüge erstellen</button>
+    </form></br>
+    <form method="POST"><button name="back" class="btn btn-primary">Zurück</button></form>
+    </br>
+    <div class="donation-container">
+    <h3>Nutzung der Web-App</h3>
+    <p>Liebe Nutzende,  </p>
+    <p>Die App wurde im August bis September 2025 entwickelt. Heißt, möglicherweise ist sie recht neu, wenn Ihr sie
+    nutzt. Bei mir funktioniert sie, allerdings könnt Ihr gerne auch einfach erstmal testen - unter Angabe, dass die 
+    Kontoauszüge ungültig sind und die gültigen zum Jahresende kommen - und mir Rückmeldung geben (Mailadresse unten).</p>    
+    <p>Außerdem gebe ich Euch die Web-App zum Kontoauszugversand basierend auf Euren DKV2-Daten sehr gerne weiter 
+    und grundsätzlich finde ich es sehr wichtig, Euch das auch kostenlos zur Verfügung zu stellen.  </p>
+    <p> Vielleicht funktioniert die App für Euch allerdings so gut, dass Ihr gerne etwas zurückgeben möchtet oder Euch
+    vorstellen könnt, mal im Projekt zu besprechen, wie.  
+    Um einige Möglichkeiten zu nennen: 
+    <ul>
+        <li>Die <a href="freiau99.github.io/freiau99" target="_blank">Freiau99</a> (Freiburg)
+        freut sich über Eure Kontaktaufnahme bezüglich Direktkrediten, da wir diese, wie gefühlt alle gerade brauchen können
+        :-D </li>
+        <li>Da meine persönlichen Finanzen generell auch häufig eher mau aussehen, freue ich mich auch über eine Spende - 
+        Ihr könnt mir gerne eine Mail schreiben an mariushuber123@gmail.com.</li>
+    </ul>  </p>
+    Soviel dazu - viel Spaß, vielen Dank und viele Grüße, Mare (Freiau99 - Freiburg).
+    </div>
+    </br>
+    <!-- Buttons für Anzeige und Maximierung -->
+    
     {% endif %}
 
   <!-- STEP 3: Mailversand -->
@@ -258,7 +294,7 @@ Liebe Grüße
         freut sich über Eure Kontaktaufnahme bezüglich Direktkrediten, da wir diese, wie gefühlt alle gerade brauchen können
         :-D </li>
         <li>Da meine persönlichen Finanzen generell auch häufig eher mau aussehen, freue ich mich auch über eine Spende - 
-        Ihr könnt mir gerne eine Mail schreiben an mariushuber123@gmail.com.</li>
+        Ihr könnt mir gerne eine Mail schreiben an <a href="mariushuber123@gmail.com">mariushuber123@gmail.com</a>.</li>
     </ul>  </p>
     Soviel dazu - viel Spaß, vielen Dank und viele Grüße, Mare (Freiau99 - Freiburg).
     </div>
