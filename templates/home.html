@@ -9,6 +9,36 @@
     textarea { width: 100%; min-height: 180px; }
     .donation-container { margin-bottom: 2rem; padding: 1.5rem; border-radius: 1rem; background: #dbf0db; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
     body {background: url("{{ url_for('static', filename='Hintergrund.png') }}");}
+    details summary {
+      display: inline-block;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #fff;
+      text-align: center;
+      text-decoration: none;
+      vertical-align: middle;
+      cursor: pointer;
+      user-select: none;
+      background-color: #0d6efd;  /* bootstrap primary blau */
+      border: 1px solid #0d6efd;
+      border-radius: 0.375rem;
+      transition: color 0.15s ease-in-out, 
+                  background-color 0.15s ease-in-out, 
+                  border-color 0.15s ease-in-out, 
+                  box-shadow 0.15s ease-in-out;
+    }
+    
+    details summary:hover {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+    
+    details summary:focus {
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
   </style>
 </head>
 <body class="container py-4">
@@ -25,12 +55,40 @@
     <div style="text-align:center">
         <img src="{{ url_for('static', filename='Screenshot-DKV2.png') }}" alt="Screenshot DKV2" height="400vh" width="600vw">
     </div>
+    </br>
+    <details>
+        <summary>
+        Ihr habt keine solche Datei? Hier klicken!
+        </summary>
+    </br>
+    Falls Ihr keine derartige Datei habt, habt Ihr im Folgenden die Möglichkeit Eure Daten in eine von mir 
+    bereitgestellten Beispieldatei zu ergänzen, sodass Ihr auch einen Kontoauszug gesendet bekommt und die Funktionalität
+    prüfen könnt. 
+    <div style="margin-top:20px;">
+      <h4>Eigene Testzeile erzeugen</h4>
+      <form action="{{ url_for('add_test_person_download') }}" method="POST">
+          <div class="mb-3">
+            <input type="text" name="vorname" placeholder="Vorname" required> </div> 
+          <div class="mb-3">         
+            <input type="text" name="nachname" placeholder="Nachname" required> </div>
+          <div class="mb-3">
+            <input type="text" name="straße" placeholder="Straße" required> </div>
+          <div class="mb-3">
+            <input type="text" name="plz" placeholder="PLZ" required> </div> 
+          <div class="mb-3">
+            <input type="text" name="stadt" placeholder="Stadt" required> </div>
+          <div class="mb-3">
+            <input type="email" name="email" placeholder="E-Mailadresse" required> </div> </br>
+        <button type="submit" class="btn btn-primary">Beispiel-CSV herunterladen</button>
+      </form>
+    </div>  
+    </details>
+    </br>
+    <h4>Upload der Beispiel oder Eurer DKV2-Daten</h4>
     <p>Als Standardwert gibt DKV2 einzelne Spalten durch den Spaltentrenner Semikolon ";" zu erkennen. 
     Meine Funktionen bauen auf dieser Formatierung auf. Wenn Ihr sichergehen möchtet, dass alles passt, könnt 
     Ihr nochmal die Datei in einem Text-Editor öffnen und schauen, ob zwischen einzelnen Spalten ";" diese Zeichen stehen. </br>
     Ihr müsst zusätzlich noch das Jahr eingeben, für welches Ihr die Kontoauszüge verschicken möchtet.</p>
-    </br>
-    </br>
     <form method="POST" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="csv_file" class="form-label">CSV-Datei in der sich die DKV2-Daten befinden.</label>
@@ -84,10 +142,10 @@
      <div style="text-align:center">
          <img src="{{ url_for('static', filename='Mustertabelle.png') }}" alt="Mustertabelle" height="auto" width="800vw">
      </div>
-    <button id="toggle-table" class="btn btn-secondary">Anzeigen/ Verbergen</button>
+    <button id="toggle-table" class="btn btn-primary">Anzeigen/ Verbergen</button>
     <div id="table-container" style="display:none; max-width:90vw; max-height:90vh; overflow:auto; margin-top:10px;">
-        <button id="maximize-table" class="btn btn-secondary">Maximieren</button>
-        <button id="minimize-table" class="btn btn-secondary">Minimieren</button>
+        <button id="maximize-table" class="btn btn-primary">Maximieren</button>
+        <button id="minimize-table" class="btn btn-primary">Minimieren</button>
         {{ table | safe }}
     </div>
     <script>
@@ -273,7 +331,12 @@ Liebe Grüße
         {% endfor %}
     </table>
     <br>
-    <a href="{{ url_for('download_status') }}">Download Versandstatus (CSV)</a>
+    <div style="margin-top: 1em;">
+        <a href="{{ url_for('download_status') }}"
+         class="btn btn-primary" download>
+         Beispiel-CSV herunterladen
+        </a>
+    </div> 
     </br>
     <form method="POST"><button name="back" class="btn btn-primary">Zurück</button></form>
     
