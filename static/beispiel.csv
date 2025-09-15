@@ -1,0 +1,3 @@
+﻿Vertragsnummer; Kundennummer; Vorname; Nachname; Strasse; PLZ; Stadt; E-Mail; IBAN; BIC; Zinssatz; Vertragswert; Aktivierungsdatum; Kündigungsfrist; Vertragsende; Zinsmodus
+2;2; Marius; Huber; Freiaustraße 99;79100; Freiburg; mariushuber123@gmail.com; DE94664900000041781807; GENODE61OG1;0,90%; 5.060,00 €; 01.09.2023;6; 31.12.9999; ansparend
+3;3;Fehlerhafte;Mailadresse; Freiaustraße 99;79100; Freiburg; mariushuber123@gmail.de; DE94664900000041781807; GENODE61OG1;0,90%; 5.060,00 €; 01.09.2023;6; 31.12.9999; ansparend2;2;Marius;Huber;Freiaustraße 99;79100;Freiburg;huber.datenmanagement@gmail.com; DE94664900000041781807; GENODE61OG1;0,90%;0 €; 01.09.2023;6; 31.12.9999; ansparend
