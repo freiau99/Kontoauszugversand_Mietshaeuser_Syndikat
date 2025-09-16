@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session, Response
+from flask import Flask, render_template, request, redirect, url_for, session, Response, make_response
 from werkzeug.utils import secure_filename
-import os, pickle, datetime
+import os, datetime, io
 import pandas as pd
 import csv, days360
 from reportlab.pdfgen.canvas import Canvas
@@ -252,6 +252,50 @@ def download_status():
     csv_data = df.to_csv(index=False, sep=";")
     return Response(csv_data, mimetype="text/csv",
                     headers={"Content-Disposition": "attachment;filename=versand_status.csv"})
+
+@app.route("/add_test_person_download", methods=["POST"])
+def add_test_person_download():
+    beispiel_path = os.path.join(app.root_path, "static", "beispiel.csv")
+
+    vorname = request.form.get("vorname")
+    nachname = request.form.get("nachname")
+    strasse = request.form.get("straße")
+    plz = request.form.get("plz")
+    stadt = request.form.get("stadt")
+    email = request.form.get("email")
+
+    if not all([vorname, nachname, strasse, plz, stadt, email]):
+        return redirect(url_for("home"))
+
+    # Header + Vorlage lesen
+    with open(beispiel_path, newline="", encoding="utf-8") as f:
+        reader = list(csv.reader(f, delimiter=";"))
+        header = reader[0]
+        rows = reader[1:]
+        first_row = reader[1] if len(reader) > 1 else header
+
+    new_row = first_row[:]
+    new_row[2] = vorname
+    new_row[3] = nachname
+    new_row[4] = strasse
+    new_row[5] = plz
+    new_row[6] = stadt
+    new_row[7] = email
+    new_row[11] = "0 €"
+
+    # CSV im Speicher erzeugen
+    output = io.StringIO()
+    writer = csv.writer(output, delimiter=";")
+    writer.writerow(header)
+    writer.writerows(rows)
+    writer.writerow(new_row)
+    csv_data = output.getvalue()
+    output.close()
+
+    response = make_response(csv_data)
+    response.headers["Content-Disposition"] = "attachment; filename=beispiel_mit_testperson.csv"
+    response.headers["Content-Type"] = "text/csv; charset=utf-8"
+    return response
 
 
 if __name__ == "__main__":
